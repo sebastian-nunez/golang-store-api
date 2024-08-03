@@ -11,6 +11,12 @@ type User struct {
 	CreatedAt time.Time `json:"createdAt"`
 }
 
+type UserStore interface {
+	GetUserByEmail(email string) (*User, error)
+	GetUserById(id int) (*User, error)
+	CreateUser(user User) error
+}
+
 type RegisterUserRequest struct {
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`

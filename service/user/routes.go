@@ -11,12 +11,21 @@ import (
 )
 
 type Handler struct {
-	store        types.UserStore
-	hashPassword func(password string) (string, error)
+	store           types.UserStore
+	hashPassword    func(password string) (string, error)
+	comparePassword func(hashed string, plain string) bool
 }
 
-func NewHandler(store types.UserStore, hashPassword func(password string) (string, error)) *Handler {
-	return &Handler{store: store, hashPassword: hashPassword}
+func NewHandler(
+	store types.UserStore,
+	hashPassword func(password string) (string, error),
+	comparePassword func(hashed string, plain string) bool,
+) *Handler {
+	return &Handler{
+		store:           store,
+		hashPassword:    hashPassword,
+		comparePassword: comparePassword,
+	}
 }
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {
@@ -25,7 +34,32 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 }
 
 func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {
+	var payload types.LoginUserRequest
+	err := utils.ParseJson(r, &payload)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
 
+	if err := utils.Validate.Struct(payload); err != nil {
+		errors := err.(validator.ValidationErrors)
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid request: %v", errors))
+		return
+	}
+
+	user, err := h.store.GetUserByEmail(payload.Email)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid email or password"))
+		return
+	}
+
+	if !h.comparePassword(user.Password, payload.Password) {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid email or password"))
+		return
+	}
+
+	// TODO(sebastian-nunez): add JWT token secret
+	utils.WriteJson(w, http.StatusOK, map[string]string{"token": ""})
 }
 
 func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {

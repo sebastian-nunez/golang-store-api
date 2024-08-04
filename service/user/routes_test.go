@@ -13,11 +13,13 @@ import (
 )
 
 const errorEmail = "error@google.com"
+const existingEmail = "exists@google.com"
 const unhashablePassword = "unhashable password"
+const correctPassword = "1234"
 
 func TestUserService(t *testing.T) {
 	mockUserStore := &mockUserStore{}
-	handler := NewHandler(mockUserStore, mockHashPassword)
+	handler := NewHandler(mockUserStore, mockHashPassword, mockComparePassword)
 
 	t.Run("should successfully register a new user", func(t *testing.T) {
 		payload := types.RegisterUserRequest{
@@ -115,13 +117,101 @@ func TestUserService(t *testing.T) {
 			t.Errorf("expected status code %d and got %d", http.StatusInternalServerError, rr.Code)
 		}
 	})
+
+	t.Run("should successfully login an existing user", func(t *testing.T) {
+		payload := types.LoginUserRequest{
+			Email:    existingEmail,
+			Password: correctPassword,
+		}
+		marshalled, _ := json.Marshal(payload)
+
+		req, err := http.NewRequest(http.MethodPost, "/login", bytes.NewBuffer(marshalled))
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		rr := httptest.NewRecorder()
+		router := mux.NewRouter()
+		router.HandleFunc("/login", handler.handleLogin)
+		router.ServeHTTP(rr, req)
+
+		if rr.Code != http.StatusOK {
+			t.Errorf("expected status code %d and got %d", http.StatusOK, rr.Code)
+		}
+	})
+
+	t.Run("should fail to login given an invalid payload", func(t *testing.T) {
+		req, err := http.NewRequest(http.MethodPost, "/login", nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		rr := httptest.NewRecorder()
+		router := mux.NewRouter()
+		router.HandleFunc("/login", handler.handleLogin)
+		router.ServeHTTP(rr, req)
+
+		if rr.Code != http.StatusBadRequest {
+			t.Errorf("expected status code %d and got %d", http.StatusBadRequest, rr.Code)
+		}
+	})
+
+	t.Run("should fail to login if the email does not exists", func(t *testing.T) {
+
+		payload := types.LoginUserRequest{
+			Email:    "does not exist",
+			Password: "some password",
+		}
+		marshalled, _ := json.Marshal(payload)
+
+		req, err := http.NewRequest(http.MethodPost, "/login", bytes.NewBuffer(marshalled))
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		rr := httptest.NewRecorder()
+		router := mux.NewRouter()
+		router.HandleFunc("/login", handler.handleLogin)
+		router.ServeHTTP(rr, req)
+
+		if rr.Code != http.StatusBadRequest {
+			t.Errorf("expected status code %d and got %d", http.StatusBadRequest, rr.Code)
+		}
+	})
+
+	t.Run("should fail to login if the password is incorrect", func(t *testing.T) {
+		payload := types.LoginUserRequest{
+			Email:    existingEmail,
+			Password: "incorrect password",
+		}
+		marshalled, _ := json.Marshal(payload)
+
+		req, err := http.NewRequest(http.MethodPost, "/login", bytes.NewBuffer(marshalled))
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		rr := httptest.NewRecorder()
+		router := mux.NewRouter()
+		router.HandleFunc("/login", handler.handleLogin)
+		router.ServeHTTP(rr, req)
+
+		if rr.Code != http.StatusBadRequest {
+			t.Errorf("expected status code %d and got %d", http.StatusBadRequest, rr.Code)
+		}
+	})
 }
 
 type mockUserStore struct{}
 
 func (m *mockUserStore) GetUserByEmail(email string) (*types.User, error) {
-	if email == "exists@google.com" {
-		return &types.User{}, nil
+	if email == existingEmail {
+		return &types.User{
+			FirstName: "Sebastian",
+			LastName:  "Nunez",
+			Email:     existingEmail,
+			Password:  "hashed password",
+		}, nil
 	}
 	return nil, fmt.Errorf("user does not exists")
 }
@@ -142,4 +232,8 @@ func mockHashPassword(password string) (string, error) {
 		return "", fmt.Errorf("unable to hash password")
 	}
 	return "hashed", nil
+}
+
+func mockComparePassword(password string, plain string) bool {
+	return plain == correctPassword
 }

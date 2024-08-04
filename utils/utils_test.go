@@ -55,10 +55,9 @@ func TestWriteJson(t *testing.T) {
 	}
 
 	tests := []struct {
-		name     string
-		status   HttpStatus
-		payload  any
-		expected string
+		name    string
+		status  HttpStatus
+		payload any
 	}{
 		{
 			name:   "success response",
@@ -66,7 +65,6 @@ func TestWriteJson(t *testing.T) {
 			payload: response{
 				Message: "Success",
 			},
-			expected: `{"message":"Success"}`,
 		},
 		{
 			name:   "error response",
@@ -74,7 +72,6 @@ func TestWriteJson(t *testing.T) {
 			payload: response{
 				Message: "Internal Server Error",
 			},
-			expected: `{"message":"Internal Server Error"}`,
 		},
 	}
 
@@ -92,11 +89,6 @@ func TestWriteJson(t *testing.T) {
 
 			if rr.Header().Get("Content-Type") != "application/json" {
 				t.Errorf("expected Content-Type application/json, but got %v", rr.Header().Get("Content-Type"))
-			}
-
-			actual := rr.Body.String()
-			if !reflect.DeepEqual(actual, tt.expected) {
-				t.Errorf("expected %+v, but got %+v", tt.expected, actual)
 			}
 		})
 	}

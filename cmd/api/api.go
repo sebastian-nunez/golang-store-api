@@ -27,7 +27,12 @@ func (s *ApiServer) Run() error {
 	subrouter := router.PathPrefix("/api/v1").Subrouter()
 
 	userStore := user.NewStore(s.db)
-	userHandler := user.NewHandler(userStore, auth.HashPassword, auth.ComparePasswords)
+	userHandler := user.NewHandler(
+		userStore,
+		auth.HashPassword,
+		auth.ComparePasswords,
+		auth.CreateJwtToken,
+	)
 	userHandler.RegisterRoutes(subrouter)
 
 	log.Println("Server: listening on port", s.addr)

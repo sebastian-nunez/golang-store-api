@@ -16,10 +16,17 @@ const errorEmail = "error@google.com"
 const existingEmail = "exists@google.com"
 const unhashablePassword = "unhashable password"
 const correctPassword = "1234"
+const badJwtEmail = "badjwt@google.com"
+const badUserId = 999
 
 func TestUserService(t *testing.T) {
 	mockUserStore := &mockUserStore{}
-	handler := NewHandler(mockUserStore, mockHashPassword, mockComparePassword)
+	handler := NewHandler(
+		mockUserStore,
+		mockHashPassword,
+		mockComparePassword,
+		mockCreateJwtToken,
+	)
 
 	t.Run("should successfully register a new user", func(t *testing.T) {
 		payload := types.RegisterUserRequest{
@@ -200,6 +207,28 @@ func TestUserService(t *testing.T) {
 			t.Errorf("expected status code %d and got %d", http.StatusBadRequest, rr.Code)
 		}
 	})
+
+	t.Run("should fail to login if unable to create JWT token", func(t *testing.T) {
+		payload := types.LoginUserRequest{
+			Email:    badJwtEmail,
+			Password: correctPassword,
+		}
+		marshalled, _ := json.Marshal(payload)
+
+		req, err := http.NewRequest(http.MethodPost, "/login", bytes.NewBuffer(marshalled))
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		rr := httptest.NewRecorder()
+		router := mux.NewRouter()
+		router.HandleFunc("/login", handler.handleLogin)
+		router.ServeHTTP(rr, req)
+
+		if rr.Code != http.StatusInternalServerError {
+			t.Errorf("expected status code %d and got %d", http.StatusInternalServerError, rr.Code)
+		}
+	})
 }
 
 type mockUserStore struct{}
@@ -207,6 +236,16 @@ type mockUserStore struct{}
 func (m *mockUserStore) GetUserByEmail(email string) (*types.User, error) {
 	if email == existingEmail {
 		return &types.User{
+			Id:        1,
+			FirstName: "Sebastian",
+			LastName:  "Nunez",
+			Email:     existingEmail,
+			Password:  "hashed password",
+		}, nil
+	}
+	if email == badJwtEmail {
+		return &types.User{
+			Id:        badUserId,
 			FirstName: "Sebastian",
 			LastName:  "Nunez",
 			Email:     existingEmail,
@@ -236,4 +275,11 @@ func mockHashPassword(password string) (string, error) {
 
 func mockComparePassword(password string, plain string) bool {
 	return plain == correctPassword
+}
+
+func mockCreateJwtToken(secret []byte, userId int) (string, error) {
+	if userId == badUserId {
+		return "", fmt.Errorf("bad user id, unable to create token")
+	}
+	return "some token", nil
 }

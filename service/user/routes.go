@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
+	"github.com/sebastian-nunez/golang-store-api/config"
 	"github.com/sebastian-nunez/golang-store-api/types"
 	"github.com/sebastian-nunez/golang-store-api/utils"
 )
@@ -14,17 +15,20 @@ type Handler struct {
 	store           types.UserStore
 	hashPassword    func(password string) (string, error)
 	comparePassword func(hashed string, plain string) bool
+	createJwtToken  func(secret []byte, userId int) (string, error)
 }
 
 func NewHandler(
 	store types.UserStore,
 	hashPassword func(password string) (string, error),
 	comparePassword func(hashed string, plain string) bool,
+	createJwtToken func(secret []byte, userId int) (string, error),
 ) *Handler {
 	return &Handler{
 		store:           store,
 		hashPassword:    hashPassword,
 		comparePassword: comparePassword,
+		createJwtToken:  createJwtToken,
 	}
 }
 
@@ -58,8 +62,14 @@ func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO(sebastian-nunez): add JWT token secret
-	utils.WriteJson(w, http.StatusOK, map[string]string{"token": ""})
+	secret := []byte(config.Envs.JwtSecret)
+	jwtToken, err := h.createJwtToken(secret, user.Id)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJson(w, http.StatusOK, map[string]string{"token": jwtToken})
 }
 
 func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {

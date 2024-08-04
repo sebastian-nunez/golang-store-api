@@ -4,6 +4,9 @@ build:
 test:
 	@go test -v ./...
 
+coverage:
+	@go test -cover fmt
+
 run: build
 	@./bin/golang-store-api
 

@@ -7,6 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/sebastian-nunez/golang-store-api/service/auth"
+	"github.com/sebastian-nunez/golang-store-api/service/product"
 	"github.com/sebastian-nunez/golang-store-api/service/user"
 )
 
@@ -26,6 +27,7 @@ func (s *ApiServer) Run() error {
 	router := mux.NewRouter()
 	subrouter := router.PathPrefix("/api/v1").Subrouter()
 
+	// Users
 	userStore := user.NewStore(s.db)
 	userHandler := user.NewHandler(
 		userStore,
@@ -34,6 +36,11 @@ func (s *ApiServer) Run() error {
 		auth.CreateJwtToken,
 	)
 	userHandler.RegisterRoutes(subrouter)
+
+	// Products
+	productStore := product.NewStore(s.db)
+	productHandler := product.NewHandler(productStore)
+	productHandler.RegisterRoutes(subrouter)
 
 	log.Println("Server: listening on port", s.addr)
 	return http.ListenAndServe(s.addr, router)

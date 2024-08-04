@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/sebastian-nunez/golang-store-api/service/auth"
 	"github.com/sebastian-nunez/golang-store-api/service/user"
 )
 
@@ -26,7 +27,7 @@ func (s *ApiServer) Run() error {
 	subrouter := router.PathPrefix("/api/v1").Subrouter()
 
 	userStore := user.NewStore(s.db)
-	userHandler := user.NewHandler(userStore)
+	userHandler := user.NewHandler(userStore, auth.HashPassword)
 	userHandler.RegisterRoutes(subrouter)
 
 	log.Println("Server: listening on port", s.addr)

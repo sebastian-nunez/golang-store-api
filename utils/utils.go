@@ -4,9 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"github.com/go-playground/validator/v10"
 )
 
 type HttpStatus int
+
+// Validate acts a single, cached validator across the app.
+var Validate = validator.New()
 
 // ParseJson decodes the request body into the payload.
 func ParseJson(r *http.Request, payload any) error {

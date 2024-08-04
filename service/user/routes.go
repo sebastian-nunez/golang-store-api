@@ -4,18 +4,19 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
-	"github.com/sebastian-nunez/golang-store-api/service/auth"
 	"github.com/sebastian-nunez/golang-store-api/types"
 	"github.com/sebastian-nunez/golang-store-api/utils"
 )
 
 type Handler struct {
-	store types.UserStore
+	store        types.UserStore
+	hashPassword func(password string) (string, error)
 }
 
-func NewHandler(store types.UserStore) *Handler {
-	return &Handler{store: store}
+func NewHandler(store types.UserStore, hashPassword func(password string) (string, error)) *Handler {
+	return &Handler{store: store, hashPassword: hashPassword}
 }
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {
@@ -35,6 +36,12 @@ func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if err := utils.Validate.Struct(payload); err != nil {
+		errors := err.(validator.ValidationErrors)
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid request: %v", errors))
+		return
+	}
+
 	user, err := h.store.GetUserByEmail(payload.Email)
 	if err == nil {
 		utils.WriteError(
@@ -45,7 +52,7 @@ func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	hashedPassword, err := auth.HashPassword(payload.Password)
+	hashedPassword, err := h.hashPassword(payload.Password)
 	if err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)
 		return

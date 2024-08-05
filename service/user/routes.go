@@ -3,6 +3,7 @@ package user
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
@@ -39,6 +40,7 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 	// Admin only routes.
 	// TODO(sebastian-nunez): add JWT auth
 	router.HandleFunc("/users", h.handleGetUsers).Methods(http.MethodGet)
+	router.HandleFunc("/users/{id}", h.handleGetUserById).Methods(http.MethodGet)
 }
 
 func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {
@@ -128,4 +130,27 @@ func (h *Handler) handleGetUsers(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.WriteJson(w, http.StatusOK, users)
+}
+
+func (h *Handler) handleGetUserById(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	strId, ok := vars["id"]
+	if !ok {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("missing user id"))
+		return
+	}
+
+	id, err := strconv.Atoi(strId)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	user, err := h.store.GetUserById(id)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJson(w, http.StatusOK, user)
 }

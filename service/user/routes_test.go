@@ -293,6 +293,30 @@ func TestUserService(t *testing.T) {
 		}
 	})
 
+	t.Run("should successfully fetch all users", func(t *testing.T) {
+		mockUserStore := &mockUserStore{}
+		handler := NewHandler(
+			mockUserStore,
+			mockHashPassword,
+			mockComparePassword,
+			mockCreateJwtToken,
+		)
+
+		req, err := http.NewRequest(http.MethodGet, "/users", nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		rr := httptest.NewRecorder()
+		router := mux.NewRouter()
+		router.HandleFunc("/users", handler.handleGetUsers)
+		router.ServeHTTP(rr, req)
+
+		if rr.Code != http.StatusOK {
+			t.Errorf("expected status code %d and got %d", http.StatusOK, rr.Code)
+		}
+	})
+
 	t.Run("should fail to fetch all users given internal DB error", func(t *testing.T) {
 		mockUserStore := &mockUserStore{err: fmt.Errorf("internal DB error")}
 		handler := NewHandler(
@@ -310,6 +334,78 @@ func TestUserService(t *testing.T) {
 		rr := httptest.NewRecorder()
 		router := mux.NewRouter()
 		router.HandleFunc("/users", handler.handleGetUsers)
+		router.ServeHTTP(rr, req)
+
+		if rr.Code != http.StatusInternalServerError {
+			t.Errorf("expected status code %d and got %d", http.StatusInternalServerError, rr.Code)
+		}
+	})
+
+	t.Run("should successfully fetch a user given a valid id", func(t *testing.T) {
+		mockUserStore := &mockUserStore{}
+		handler := NewHandler(
+			mockUserStore,
+			mockHashPassword,
+			mockComparePassword,
+			mockCreateJwtToken,
+		)
+
+		req, err := http.NewRequest(http.MethodGet, "/users/1", nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		rr := httptest.NewRecorder()
+		router := mux.NewRouter()
+		router.HandleFunc("/users/{id}", handler.handleGetUserById)
+		router.ServeHTTP(rr, req)
+
+		if rr.Code != http.StatusOK {
+			t.Errorf("expected status code %d and got %d", http.StatusOK, rr.Code)
+		}
+	})
+
+	t.Run("should fail to fetch a user given a invalid id", func(t *testing.T) {
+		mockUserStore := &mockUserStore{}
+		handler := NewHandler(
+			mockUserStore,
+			mockHashPassword,
+			mockComparePassword,
+			mockCreateJwtToken,
+		)
+
+		req, err := http.NewRequest(http.MethodGet, "/users/invalid", nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		rr := httptest.NewRecorder()
+		router := mux.NewRouter()
+		router.HandleFunc("/users/{id}", handler.handleGetUserById)
+		router.ServeHTTP(rr, req)
+
+		if rr.Code != http.StatusInternalServerError {
+			t.Errorf("expected status code %d and got %d", http.StatusInternalServerError, rr.Code)
+		}
+	})
+
+	t.Run("should fail to fetch a user given an internal DB error", func(t *testing.T) {
+		mockUserStore := &mockUserStore{err: fmt.Errorf("internal DB error")}
+		handler := NewHandler(
+			mockUserStore,
+			mockHashPassword,
+			mockComparePassword,
+			mockCreateJwtToken,
+		)
+
+		req, err := http.NewRequest(http.MethodGet, "/users/1", nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		rr := httptest.NewRecorder()
+		router := mux.NewRouter()
+		router.HandleFunc("/users/{id}", handler.handleGetUserById)
 		router.ServeHTTP(rr, req)
 
 		if rr.Code != http.StatusInternalServerError {
@@ -345,7 +441,7 @@ func (m *mockUserStore) GetUserByEmail(email string) (*types.User, error) {
 }
 
 func (m *mockUserStore) GetUserById(id int) (*types.User, error) {
-	return &types.User{}, nil
+	return &types.User{}, m.err
 }
 
 func (m *mockUserStore) CreateUser(user types.User) error {

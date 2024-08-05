@@ -76,11 +76,11 @@ func (h *Handler) handleCreateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := h.store.CreateProduct(product)
+	id, err := h.store.CreateProduct(product)
 	if err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	utils.WriteJson(w, http.StatusCreated, product)
+	utils.WriteJson(w, http.StatusCreated, map[string]int{"id": id})
 }

@@ -57,16 +57,21 @@ func (s *Store) GetUserById(id int) (*types.User, error) {
 	return user, nil
 }
 
-func (s *Store) CreateUser(user types.User) error {
-	_, err := s.db.Query(
+func (s *Store) CreateUser(user types.User) (int, error) {
+	res, err := s.db.Exec(
 		"INSERT INTO users (firstName, lastName, email, password) VALUES (?, ?, ?, ?)",
 		user.FirstName, user.LastName, user.Email, user.Password,
 	)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	return nil
+	id, err := res.LastInsertId()
+	if err != nil {
+		return 0, nil
+	}
+
+	return int(id), nil
 }
 
 func (s *Store) GetUsers() ([]types.User, error) {

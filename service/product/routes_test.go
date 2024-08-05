@@ -204,8 +204,8 @@ func (s *mockProductStore) GetProductById(id int) (*types.Product, error) {
 	return nil, s.err
 }
 
-func (s *mockProductStore) CreateProduct(product types.CreateProductRequest) error {
-	return s.err
+func (s *mockProductStore) CreateProduct(product types.CreateProductRequest) (int, error) {
+	return 1, s.err
 }
 
 func (s *mockProductStore) UpdateProduct(product types.Product) error {

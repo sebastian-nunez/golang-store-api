@@ -446,11 +446,11 @@ func (m *mockUserStore) GetUserById(id int) (*types.User, error) {
 	return &types.User{}, m.err
 }
 
-func (m *mockUserStore) CreateUser(user types.User) error {
+func (m *mockUserStore) CreateUser(user types.User) (int, error) {
 	if user.Email == errorEmail {
-		return fmt.Errorf("unable to create user")
+		return 0, fmt.Errorf("unable to create user")
 	}
-	return nil
+	return 1, nil
 }
 
 func (m *mockUserStore) GetUsers() ([]types.User, error) {

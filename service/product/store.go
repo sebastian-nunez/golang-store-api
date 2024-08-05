@@ -55,8 +55,8 @@ func (s *Store) GetProductById(id int) (*types.Product, error) {
 	return product, nil
 }
 
-func (s *Store) CreateProduct(product types.CreateProductRequest) error {
-	_, err := s.db.Exec(
+func (s *Store) CreateProduct(product types.CreateProductRequest) (int, error) {
+	res, err := s.db.Exec(
 		"INSERT INTO products (name, price, image, description, quantity) VALUES (?, ?, ?, ?, ?)",
 		product.Name,
 		product.Price,
@@ -65,10 +65,15 @@ func (s *Store) CreateProduct(product types.CreateProductRequest) error {
 		product.Quantity,
 	)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	return nil
+	id, err := res.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return int(id), nil
 }
 
 func (s *Store) UpdateProduct(product types.Product) error {

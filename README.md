@@ -18,7 +18,7 @@ make run
 
 _The project requires environment variables to be set. You can find the list of required variables in the `.env.template` file._
 
-### Migrations
+### Database migrations
 
 We are using [golang-migrate](https://github.com/golang-migrate/migrate/tree/master) to ease all database migrations.
 

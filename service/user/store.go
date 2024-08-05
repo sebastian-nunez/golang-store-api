@@ -69,6 +69,25 @@ func (s *Store) CreateUser(user types.User) error {
 	return nil
 }
 
+func (s *Store) GetUsers() ([]types.User, error) {
+	rows, err := s.db.Query("SELECT * FROM users")
+	if err != nil {
+		return nil, err
+	}
+
+	users := make([]types.User, 0)
+	for rows.Next() {
+		user, err := scanRowsIntoUser(rows)
+		if err != nil {
+			return nil, err
+		}
+
+		users = append(users, *user)
+	}
+
+	return users, nil
+}
+
 func scanRowsIntoUser(rows *sql.Rows) (*types.User, error) {
 	user := new(types.User)
 	err := rows.Scan(

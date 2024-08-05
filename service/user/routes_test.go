@@ -20,15 +20,15 @@ const badJwtEmail = "badjwt@google.com"
 const badUserId = 999
 
 func TestUserService(t *testing.T) {
-	mockUserStore := &mockUserStore{}
-	handler := NewHandler(
-		mockUserStore,
-		mockHashPassword,
-		mockComparePassword,
-		mockCreateJwtToken,
-	)
-
 	t.Run("should successfully register a new user", func(t *testing.T) {
+		mockUserStore := &mockUserStore{}
+		handler := NewHandler(
+			mockUserStore,
+			mockHashPassword,
+			mockComparePassword,
+			mockCreateJwtToken,
+		)
+
 		payload := types.RegisterUserRequest{
 			FirstName: "Sebastian",
 			LastName:  "Nunez",
@@ -53,6 +53,14 @@ func TestUserService(t *testing.T) {
 	})
 
 	t.Run("should fail to register given an invalid user payload", func(t *testing.T) {
+		mockUserStore := &mockUserStore{}
+		handler := NewHandler(
+			mockUserStore,
+			mockHashPassword,
+			mockComparePassword,
+			mockCreateJwtToken,
+		)
+
 		invalidEmail := "invalid"
 		payload := types.RegisterUserRequest{
 			FirstName: "Sebastian",
@@ -78,6 +86,14 @@ func TestUserService(t *testing.T) {
 	})
 
 	t.Run("should fail to register if unable to hash password", func(t *testing.T) {
+		mockUserStore := &mockUserStore{}
+		handler := NewHandler(
+			mockUserStore,
+			mockHashPassword,
+			mockComparePassword,
+			mockCreateJwtToken,
+		)
+
 		payload := types.RegisterUserRequest{
 			FirstName: "Sebastian",
 			LastName:  "Nunez",
@@ -102,6 +118,14 @@ func TestUserService(t *testing.T) {
 	})
 
 	t.Run("should fail to register if unable to create user", func(t *testing.T) {
+		mockUserStore := &mockUserStore{}
+		handler := NewHandler(
+			mockUserStore,
+			mockHashPassword,
+			mockComparePassword,
+			mockCreateJwtToken,
+		)
+
 		payload := types.RegisterUserRequest{
 			FirstName: "Sebastian",
 			LastName:  "Nunez",
@@ -126,6 +150,14 @@ func TestUserService(t *testing.T) {
 	})
 
 	t.Run("should successfully login an existing user", func(t *testing.T) {
+		mockUserStore := &mockUserStore{}
+		handler := NewHandler(
+			mockUserStore,
+			mockHashPassword,
+			mockComparePassword,
+			mockCreateJwtToken,
+		)
+
 		payload := types.LoginUserRequest{
 			Email:    existingEmail,
 			Password: correctPassword,
@@ -148,6 +180,14 @@ func TestUserService(t *testing.T) {
 	})
 
 	t.Run("should fail to login given an invalid payload", func(t *testing.T) {
+		mockUserStore := &mockUserStore{}
+		handler := NewHandler(
+			mockUserStore,
+			mockHashPassword,
+			mockComparePassword,
+			mockCreateJwtToken,
+		)
+
 		req, err := http.NewRequest(http.MethodPost, "/login", nil)
 		if err != nil {
 			t.Fatal(err)
@@ -164,6 +204,13 @@ func TestUserService(t *testing.T) {
 	})
 
 	t.Run("should fail to login if the email does not exists", func(t *testing.T) {
+		mockUserStore := &mockUserStore{}
+		handler := NewHandler(
+			mockUserStore,
+			mockHashPassword,
+			mockComparePassword,
+			mockCreateJwtToken,
+		)
 
 		payload := types.LoginUserRequest{
 			Email:    "does not exist",
@@ -187,6 +234,14 @@ func TestUserService(t *testing.T) {
 	})
 
 	t.Run("should fail to login if the password is incorrect", func(t *testing.T) {
+		mockUserStore := &mockUserStore{}
+		handler := NewHandler(
+			mockUserStore,
+			mockHashPassword,
+			mockComparePassword,
+			mockCreateJwtToken,
+		)
+
 		payload := types.LoginUserRequest{
 			Email:    existingEmail,
 			Password: "incorrect password",
@@ -209,6 +264,14 @@ func TestUserService(t *testing.T) {
 	})
 
 	t.Run("should fail to login if unable to create JWT token", func(t *testing.T) {
+		mockUserStore := &mockUserStore{}
+		handler := NewHandler(
+			mockUserStore,
+			mockHashPassword,
+			mockComparePassword,
+			mockCreateJwtToken,
+		)
+
 		payload := types.LoginUserRequest{
 			Email:    badJwtEmail,
 			Password: correctPassword,
@@ -229,9 +292,35 @@ func TestUserService(t *testing.T) {
 			t.Errorf("expected status code %d and got %d", http.StatusInternalServerError, rr.Code)
 		}
 	})
+
+	t.Run("should fail to fetch all users given internal DB error", func(t *testing.T) {
+		mockUserStore := &mockUserStore{err: fmt.Errorf("internal DB error")}
+		handler := NewHandler(
+			mockUserStore,
+			mockHashPassword,
+			mockComparePassword,
+			mockCreateJwtToken,
+		)
+
+		req, err := http.NewRequest(http.MethodGet, "/users", nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		rr := httptest.NewRecorder()
+		router := mux.NewRouter()
+		router.HandleFunc("/users", handler.handleGetUsers)
+		router.ServeHTTP(rr, req)
+
+		if rr.Code != http.StatusInternalServerError {
+			t.Errorf("expected status code %d and got %d", http.StatusInternalServerError, rr.Code)
+		}
+	})
 }
 
-type mockUserStore struct{}
+type mockUserStore struct {
+	err error
+}
 
 func (m *mockUserStore) GetUserByEmail(email string) (*types.User, error) {
 	if email == existingEmail {
@@ -264,6 +353,10 @@ func (m *mockUserStore) CreateUser(user types.User) error {
 		return fmt.Errorf("unable to create user")
 	}
 	return nil
+}
+
+func (m *mockUserStore) GetUsers() ([]types.User, error) {
+	return nil, m.err
 }
 
 func mockHashPassword(password string) (string, error) {

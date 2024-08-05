@@ -23,9 +23,11 @@ func NewHandler(store types.ProductStore) *Handler {
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/products", h.handleGetProducts).Methods(http.MethodGet)
-	router.HandleFunc("/products", h.handleCreateProduct).Methods(http.MethodPost)
 	router.HandleFunc("/products/{id}", h.handleGetProductById).Methods(http.MethodGet)
 
+	// Admin only routes.
+	// TODO(sebastian-nunez): add JWT auth
+	router.HandleFunc("/products", h.handleCreateProduct).Methods(http.MethodPost)
 }
 
 func (h *Handler) handleGetProducts(w http.ResponseWriter, r *http.Request) {

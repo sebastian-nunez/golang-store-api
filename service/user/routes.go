@@ -35,6 +35,10 @@ func NewHandler(
 func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/login", h.handleLogin).Methods(http.MethodPost)
 	router.HandleFunc("/register", h.handleRegister).Methods(http.MethodPost)
+
+	// Admin only routes.
+	// TODO(sebastian-nunez): add JWT auth
+	router.HandleFunc("/users", h.handleGetUsers).Methods(http.MethodGet)
 }
 
 func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {
@@ -114,4 +118,14 @@ func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.WriteJson(w, http.StatusCreated, nil)
+}
+
+func (h *Handler) handleGetUsers(w http.ResponseWriter, r *http.Request) {
+	users, err := h.store.GetUsers()
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJson(w, http.StatusOK, users)
 }

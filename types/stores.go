@@ -4,6 +4,7 @@ type UserStore interface {
 	GetUserByEmail(email string) (*User, error)
 	GetUserById(id int) (*User, error)
 	CreateUser(user User) error
+	GetUsers() ([]User, error)
 }
 
 type ProductStore interface {

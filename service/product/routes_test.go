@@ -1,6 +1,8 @@
 package product
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -105,6 +107,89 @@ func TestProductService(t *testing.T) {
 			t.Errorf("expected %d and got %d", http.StatusNotFound, rr.Code)
 		}
 	})
+
+	t.Run("should successfully create a new product", func(t *testing.T) {
+		mockProductStore := &mockProductStore{}
+		handler := NewHandler(mockProductStore)
+
+		payload := types.CreateProductRequest{
+			Name:        "Jordans",
+			Description: "",
+			Image:       "",
+			Price:       125,
+			Quantity:    5,
+		}
+		marshalled, _ := json.Marshal(payload)
+
+		req, err := http.NewRequest(http.MethodPost, "/products", bytes.NewBuffer(marshalled))
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		rr := httptest.NewRecorder()
+		router := mux.NewRouter()
+		router.HandleFunc("/products", handler.handleCreateProduct)
+		router.ServeHTTP(rr, req)
+
+		if rr.Code != http.StatusCreated {
+			t.Errorf("expected status code %d and got %d", http.StatusCreated, rr.Code)
+		}
+	})
+
+	t.Run("should fail to create a new product given invalid request payload", func(t *testing.T) {
+		mockProductStore := &mockProductStore{}
+		handler := NewHandler(mockProductStore)
+
+		payload := types.CreateProductRequest{
+			Description: "",
+			Image:       "",
+			Price:       125,
+			Quantity:    5,
+		}
+		marshalled, _ := json.Marshal(payload)
+
+		req, err := http.NewRequest(http.MethodPost, "/products", bytes.NewBuffer(marshalled))
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		rr := httptest.NewRecorder()
+		router := mux.NewRouter()
+		router.HandleFunc("/products", handler.handleCreateProduct)
+		router.ServeHTTP(rr, req)
+
+		if rr.Code != http.StatusBadRequest {
+			t.Errorf("expected status code %d and got %d", http.StatusBadRequest, rr.Code)
+		}
+	})
+
+	t.Run("should return error if unable to create valid product within the database", func(t *testing.T) {
+		mockProductStore := &mockProductStore{err: fmt.Errorf("internal DB error")}
+		handler := NewHandler(mockProductStore)
+
+		payload := types.CreateProductRequest{
+			Name:        "Jordans",
+			Description: "",
+			Image:       "",
+			Price:       125,
+			Quantity:    5,
+		}
+		marshalled, _ := json.Marshal(payload)
+
+		req, err := http.NewRequest(http.MethodPost, "/products", bytes.NewBuffer(marshalled))
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		rr := httptest.NewRecorder()
+		router := mux.NewRouter()
+		router.HandleFunc("/products", handler.handleCreateProduct)
+		router.ServeHTTP(rr, req)
+
+		if rr.Code != http.StatusInternalServerError {
+			t.Errorf("expected status code %d and got %d", http.StatusInternalServerError, rr.Code)
+		}
+	})
 }
 
 type mockProductStore struct {
@@ -117,4 +202,12 @@ func (s *mockProductStore) GetProducts() ([]types.Product, error) {
 
 func (s *mockProductStore) GetProductById(id int) (*types.Product, error) {
 	return nil, s.err
+}
+
+func (s *mockProductStore) CreateProduct(product types.CreateProductRequest) error {
+	return s.err
+}
+
+func (s *mockProductStore) UpdateProduct(product types.Product) error {
+	return s.err
 }

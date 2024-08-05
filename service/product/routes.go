@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
 	"github.com/sebastian-nunez/golang-store-api/types"
 	"github.com/sebastian-nunez/golang-store-api/utils"
@@ -22,7 +23,9 @@ func NewHandler(store types.ProductStore) *Handler {
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/products", h.handleGetProducts).Methods(http.MethodGet)
+	router.HandleFunc("/products", h.handleCreateProduct).Methods(http.MethodPost)
 	router.HandleFunc("/products/{id}", h.handleGetProductById).Methods(http.MethodGet)
+
 }
 
 func (h *Handler) handleGetProducts(w http.ResponseWriter, r *http.Request) {
@@ -56,4 +59,26 @@ func (h *Handler) handleGetProductById(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.WriteJson(w, http.StatusOK, product)
+}
+
+func (h *Handler) handleCreateProduct(w http.ResponseWriter, r *http.Request) {
+	var product types.CreateProductRequest
+	if err := utils.ParseJson(r, &product); err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if err := utils.Validate.Struct(product); err != nil {
+		errors := err.(validator.ValidationErrors)
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid request payload: %v", errors))
+		return
+	}
+
+	err := h.store.CreateProduct(product)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJson(w, http.StatusCreated, product)
 }

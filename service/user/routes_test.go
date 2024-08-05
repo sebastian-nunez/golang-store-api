@@ -12,12 +12,14 @@ import (
 	"github.com/sebastian-nunez/golang-store-api/types"
 )
 
-const errorEmail = "error@google.com"
-const existingEmail = "exists@google.com"
-const unhashablePassword = "unhashable password"
-const correctPassword = "1234"
-const badJwtEmail = "badjwt@google.com"
-const badUserId = 999
+const (
+	errorEmail         = "error@google.com"
+	existingEmail      = "exists@google.com"
+	unhashablePassword = "unhashable password"
+	correctPassword    = "1234"
+	badJwtEmail        = "badjwt@google.com"
+	badUserId          = 999
+)
 
 func TestUserService(t *testing.T) {
 	t.Run("should successfully register a new user", func(t *testing.T) {

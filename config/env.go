@@ -19,6 +19,7 @@ type Config struct {
 	DbName                 string
 	JwtExpirationInSeconds int64
 	JwtSecret              string
+	// When adding new fields, make sure to update `.env.template`
 }
 
 // Envs is the global configuration for the application.

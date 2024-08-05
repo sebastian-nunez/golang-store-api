@@ -3,7 +3,7 @@ package types
 import "time"
 
 type User struct {
-	Id        int       `json:"id"`
+	ID        int       `json:"id"`
 	FirstName string    `json:"firstName"`
 	LastName  string    `json:"lastName"`
 	Email     string    `json:"email"`
@@ -12,7 +12,7 @@ type User struct {
 }
 
 type Product struct {
-	Id          int       `json:"id"`
+	ID          int       `json:"id"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	Image       string    `json:"image"`
@@ -22,8 +22,8 @@ type Product struct {
 }
 
 type Order struct {
-	Id        int       `json:"id"`
-	UserId    int       `json:"userId"`
+	ID        int       `json:"id"`
+	UserID    int       `json:"userId"`
 	Total     float64   `json:"total"`
 	Status    string    `json:"status"`
 	Address   string    `json:"address"`
@@ -31,9 +31,9 @@ type Order struct {
 }
 
 type OrderItem struct {
-	Id        int       `json:"id"`
-	OrderId   int       `json:"orderId"`
-	ProductId int       `json:"productId"`
+	ID        int       `json:"id"`
+	OrderID   int       `json:"orderId"`
+	ProductID int       `json:"productId"`
 	Quantity  int       `json:"quantity"`
 	Price     float64   `json:"price"`
 	CreatedAt time.Time `json:"createdAt"`

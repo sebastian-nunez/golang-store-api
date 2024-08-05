@@ -2,12 +2,12 @@ package auth
 
 import "testing"
 
-func TestCreateJwtToken(t *testing.T) {
+func TestCreateJWTToken(t *testing.T) {
 	t.Run("should return a valid JWT token", func(t *testing.T) {
 		secret := []byte("some secret")
 		userId := 1234
 
-		token, err := CreateJwtToken(secret, userId)
+		token, err := CreateJWTToken(secret, userId)
 		if err != nil {
 			t.Errorf("expected token and got error %s", err)
 		}

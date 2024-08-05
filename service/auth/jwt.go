@@ -9,8 +9,8 @@ import (
 )
 
 // CreateJwt returns a signed JWT token.
-func CreateJwtToken(secret []byte, userId int) (string, error) {
-	expiration := time.Second * time.Duration(config.Envs.JwtExpirationInSeconds)
+func CreateJWTToken(secret []byte, userId int) (string, error) {
+	expiration := time.Second * time.Duration(config.Envs.JWTExpirationInSeconds)
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"userId":    strconv.Itoa(userId),

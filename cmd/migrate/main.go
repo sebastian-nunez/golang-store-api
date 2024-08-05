@@ -14,16 +14,16 @@ import (
 
 func main() {
 	cfg := mysqlDriver.Config{
-		User:                 config.Envs.DbUser,
-		Passwd:               config.Envs.DbPassword,
-		Addr:                 config.Envs.DbAddress,
-		DBName:               config.Envs.DbName,
+		User:                 config.Envs.DBUser,
+		Passwd:               config.Envs.DBPassword,
+		Addr:                 config.Envs.DBAddress,
+		DBName:               config.Envs.DBName,
 		Net:                  "tcp",
 		AllowNativePasswords: true,
 		ParseTime:            true,
 	}
 
-	db, err := db.NewMySqlStorage(cfg)
+	db, err := db.NewMySQLStorage(cfg)
 	if err != nil {
 		log.Fatal(err)
 	}

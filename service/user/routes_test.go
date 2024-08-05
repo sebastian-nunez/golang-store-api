@@ -423,7 +423,7 @@ type mockUserStore struct {
 func (m *mockUserStore) GetUserByEmail(email string) (*types.User, error) {
 	if email == existingEmail {
 		return &types.User{
-			Id:        1,
+			ID:        1,
 			FirstName: "Sebastian",
 			LastName:  "Nunez",
 			Email:     existingEmail,
@@ -432,7 +432,7 @@ func (m *mockUserStore) GetUserByEmail(email string) (*types.User, error) {
 	}
 	if email == badJwtEmail {
 		return &types.User{
-			Id:        badUserId,
+			ID:        badUserId,
 			FirstName: "Sebastian",
 			LastName:  "Nunez",
 			Email:     existingEmail,

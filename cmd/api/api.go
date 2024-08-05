@@ -11,19 +11,19 @@ import (
 	"github.com/sebastian-nunez/golang-store-api/service/user"
 )
 
-type ApiServer struct {
+type Server struct {
 	addr string
 	db   *sql.DB
 }
 
-func NewApiServer(addr string, db *sql.DB) *ApiServer {
-	return &ApiServer{
+func NewServer(addr string, db *sql.DB) *Server {
+	return &Server{
 		addr: addr,
 		db:   db,
 	}
 }
 
-func (s *ApiServer) Run() error {
+func (s *Server) Run() error {
 	router := mux.NewRouter()
 	subrouter := router.PathPrefix("/api/v1").Subrouter()
 
@@ -33,7 +33,7 @@ func (s *ApiServer) Run() error {
 		userStore,
 		auth.HashPassword,
 		auth.ComparePasswords,
-		auth.CreateJwtToken,
+		auth.CreateJWTToken,
 	)
 	userHandler.RegisterRoutes(subrouter)
 

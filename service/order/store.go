@@ -19,7 +19,7 @@ func NewStore(db *sql.DB) *Store {
 func (s *Store) CreateOrder(order types.Order) (int, error) {
 	res, err := s.db.Exec(
 		"INSERT INTO orders (userId, total, status, address) VALUES (?, ?, ?, ?)",
-		order.UserId,
+		order.UserID,
 		order.Total,
 		order.Status,
 		order.Address,
@@ -39,8 +39,8 @@ func (s *Store) CreateOrder(order types.Order) (int, error) {
 func (s *Store) CreateOrderItem(orderItem types.OrderItem) error {
 	_, err := s.db.Exec(
 		"INSERT INTO order_items (orderId, productId, quantity, price) VALUES (?, ?, ?, ?)",
-		orderItem.OrderId,
-		orderItem.ProductId,
+		orderItem.OrderID,
+		orderItem.ProductID,
 		orderItem.Quantity,
 		orderItem.Price,
 	)

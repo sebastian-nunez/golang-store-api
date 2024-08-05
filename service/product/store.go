@@ -48,7 +48,7 @@ func (s *Store) GetProductById(id int) (*types.Product, error) {
 		}
 	}
 
-	if product.Id == 0 {
+	if product.ID == 0 {
 		return nil, fmt.Errorf("product with id %d not found", id)
 	}
 
@@ -84,7 +84,7 @@ func (s *Store) UpdateProduct(product types.Product) error {
 		product.Image,
 		product.Description,
 		product.Quantity,
-		product.Id,
+		product.ID,
 	)
 	if err != nil {
 		return err
@@ -96,7 +96,7 @@ func (s *Store) UpdateProduct(product types.Product) error {
 func scanRowsIntoProduct(rows *sql.Rows) (*types.Product, error) {
 	product := new(types.Product)
 	err := rows.Scan(
-		&product.Id,
+		&product.ID,
 		&product.Name,
 		&product.Description,
 		&product.Image,

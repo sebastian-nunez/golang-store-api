@@ -11,11 +11,11 @@ import (
 )
 
 func main() {
-	db, err := db.NewMySqlStorage(mysql.Config{
-		User:                 config.Envs.DbUser,
-		Passwd:               config.Envs.DbPassword,
-		Addr:                 config.Envs.DbAddress,
-		DBName:               config.Envs.DbName,
+	db, err := db.NewMySQLStorage(mysql.Config{
+		User:                 config.Envs.DBUser,
+		Passwd:               config.Envs.DBPassword,
+		Addr:                 config.Envs.DBAddress,
+		DBName:               config.Envs.DBName,
 		Net:                  "tcp",
 		AllowNativePasswords: true,
 		ParseTime:            true,
@@ -26,7 +26,7 @@ func main() {
 
 	initStorage(db)
 
-	server := api.NewApiServer(":8080", db)
+	server := api.NewServer(":8080", db)
 	if err := server.Run(); err != nil {
 		log.Fatal("Server: unable to run. ", err)
 	}

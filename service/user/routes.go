@@ -146,7 +146,7 @@ func (h *Handler) handleGetUserById(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := h.store.GetUserById(id)
+	user, err := h.store.GetUserByID(id)
 	if err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)
 		return

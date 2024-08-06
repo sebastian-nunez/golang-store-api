@@ -34,7 +34,7 @@ func (s *Store) GetProducts() ([]types.Product, error) {
 	return products, nil
 }
 
-func (s *Store) GetProductById(id int) (*types.Product, error) {
+func (s *Store) GetProductByID(id int) (*types.Product, error) {
 	rows, err := s.db.Query("SELECT * FROM products WHERE id = ?", id)
 	if err != nil {
 		return nil, err

@@ -41,7 +41,8 @@ func TestCreateOrder(t *testing.T) {
 }
 
 func TestCreateOrderItem(t *testing.T) {
-	db, mockDb, err := sqlmock.New()
+	t.Parallel()
+	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("unable to stub db %s", err)
 	}
@@ -56,7 +57,7 @@ func TestCreateOrderItem(t *testing.T) {
 		Price:     50.0,
 	}
 
-	mockDb.ExpectExec("INSERT INTO order_items").
+	mock.ExpectExec("INSERT INTO order_items").
 		WithArgs(orderItem.OrderID, orderItem.ProductID, orderItem.Quantity, orderItem.Price).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
@@ -65,7 +66,7 @@ func TestCreateOrderItem(t *testing.T) {
 		t.Errorf("expected no error, but got %v", err)
 	}
 
-	if err := mockDb.ExpectationsWereMet(); err != nil {
+	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Errorf("there were unfulfilled expectations: %v", err)
 	}
 }

@@ -22,13 +22,15 @@ const (
 )
 
 func TestUserService(t *testing.T) {
+	t.Parallel()
+
 	t.Run("should successfully register a new user", func(t *testing.T) {
 		mockUserStore := &mockUserStore{}
 		handler := NewHandler(
 			mockUserStore,
 			mockHashPassword,
 			mockComparePassword,
-			mockCreateJwtToken,
+			mockCreateJWTToken,
 		)
 
 		payload := types.RegisterUserRequest{
@@ -60,7 +62,7 @@ func TestUserService(t *testing.T) {
 			mockUserStore,
 			mockHashPassword,
 			mockComparePassword,
-			mockCreateJwtToken,
+			mockCreateJWTToken,
 		)
 
 		invalidEmail := "invalid"
@@ -93,7 +95,7 @@ func TestUserService(t *testing.T) {
 			mockUserStore,
 			mockHashPassword,
 			mockComparePassword,
-			mockCreateJwtToken,
+			mockCreateJWTToken,
 		)
 
 		payload := types.RegisterUserRequest{
@@ -125,7 +127,7 @@ func TestUserService(t *testing.T) {
 			mockUserStore,
 			mockHashPassword,
 			mockComparePassword,
-			mockCreateJwtToken,
+			mockCreateJWTToken,
 		)
 
 		payload := types.RegisterUserRequest{
@@ -157,7 +159,7 @@ func TestUserService(t *testing.T) {
 			mockUserStore,
 			mockHashPassword,
 			mockComparePassword,
-			mockCreateJwtToken,
+			mockCreateJWTToken,
 		)
 
 		payload := types.LoginUserRequest{
@@ -187,7 +189,7 @@ func TestUserService(t *testing.T) {
 			mockUserStore,
 			mockHashPassword,
 			mockComparePassword,
-			mockCreateJwtToken,
+			mockCreateJWTToken,
 		)
 
 		req, err := http.NewRequest(http.MethodPost, "/login", nil)
@@ -211,7 +213,7 @@ func TestUserService(t *testing.T) {
 			mockUserStore,
 			mockHashPassword,
 			mockComparePassword,
-			mockCreateJwtToken,
+			mockCreateJWTToken,
 		)
 
 		payload := types.LoginUserRequest{
@@ -241,7 +243,7 @@ func TestUserService(t *testing.T) {
 			mockUserStore,
 			mockHashPassword,
 			mockComparePassword,
-			mockCreateJwtToken,
+			mockCreateJWTToken,
 		)
 
 		payload := types.LoginUserRequest{
@@ -271,7 +273,7 @@ func TestUserService(t *testing.T) {
 			mockUserStore,
 			mockHashPassword,
 			mockComparePassword,
-			mockCreateJwtToken,
+			mockCreateJWTToken,
 		)
 
 		payload := types.LoginUserRequest{
@@ -301,7 +303,7 @@ func TestUserService(t *testing.T) {
 			mockUserStore,
 			mockHashPassword,
 			mockComparePassword,
-			mockCreateJwtToken,
+			mockCreateJWTToken,
 		)
 
 		req, err := http.NewRequest(http.MethodGet, "/users", nil)
@@ -325,7 +327,7 @@ func TestUserService(t *testing.T) {
 			mockUserStore,
 			mockHashPassword,
 			mockComparePassword,
-			mockCreateJwtToken,
+			mockCreateJWTToken,
 		)
 
 		req, err := http.NewRequest(http.MethodGet, "/users", nil)
@@ -349,7 +351,7 @@ func TestUserService(t *testing.T) {
 			mockUserStore,
 			mockHashPassword,
 			mockComparePassword,
-			mockCreateJwtToken,
+			mockCreateJWTToken,
 		)
 
 		req, err := http.NewRequest(http.MethodGet, "/users/1", nil)
@@ -373,7 +375,7 @@ func TestUserService(t *testing.T) {
 			mockUserStore,
 			mockHashPassword,
 			mockComparePassword,
-			mockCreateJwtToken,
+			mockCreateJWTToken,
 		)
 
 		req, err := http.NewRequest(http.MethodGet, "/users/invalid", nil)
@@ -397,7 +399,7 @@ func TestUserService(t *testing.T) {
 			mockUserStore,
 			mockHashPassword,
 			mockComparePassword,
-			mockCreateJwtToken,
+			mockCreateJWTToken,
 		)
 
 		req, err := http.NewRequest(http.MethodGet, "/users/1", nil)
@@ -442,7 +444,7 @@ func (m *mockUserStore) GetUserByEmail(email string) (*types.User, error) {
 	return nil, fmt.Errorf("user does not exists")
 }
 
-func (m *mockUserStore) GetUserById(id int) (*types.User, error) {
+func (m *mockUserStore) GetUserByID(id int) (*types.User, error) {
 	return &types.User{}, m.err
 }
 
@@ -468,7 +470,7 @@ func mockComparePassword(password string, plain string) bool {
 	return plain == correctPassword
 }
 
-func mockCreateJwtToken(secret []byte, userId int) (string, error) {
+func mockCreateJWTToken(secret []byte, userId int) (string, error) {
 	if userId == badUserId {
 		return "", fmt.Errorf("bad user id, unable to create token")
 	}

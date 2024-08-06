@@ -52,7 +52,7 @@ func TestUserService(t *testing.T) {
 		router.ServeHTTP(rr, req)
 
 		if rr.Code != http.StatusCreated {
-			t.Errorf("expected status code %d and got %d", http.StatusCreated, rr.Code)
+			t.Errorf("want status code %d and got %d", http.StatusCreated, rr.Code)
 		}
 	})
 
@@ -85,7 +85,7 @@ func TestUserService(t *testing.T) {
 		router.ServeHTTP(rr, req)
 
 		if rr.Code != http.StatusBadRequest {
-			t.Errorf("expected status code %d and got %d", http.StatusBadRequest, rr.Code)
+			t.Errorf("want status code %d and got %d", http.StatusBadRequest, rr.Code)
 		}
 	})
 
@@ -117,7 +117,7 @@ func TestUserService(t *testing.T) {
 		router.ServeHTTP(rr, req)
 
 		if rr.Code != http.StatusInternalServerError {
-			t.Errorf("expected status code %d and got %d", http.StatusInternalServerError, rr.Code)
+			t.Errorf("want status code %d and got %d", http.StatusInternalServerError, rr.Code)
 		}
 	})
 
@@ -149,7 +149,7 @@ func TestUserService(t *testing.T) {
 		router.ServeHTTP(rr, req)
 
 		if rr.Code != http.StatusInternalServerError {
-			t.Errorf("expected status code %d and got %d", http.StatusInternalServerError, rr.Code)
+			t.Errorf("want status code %d and got %d", http.StatusInternalServerError, rr.Code)
 		}
 	})
 
@@ -179,7 +179,7 @@ func TestUserService(t *testing.T) {
 		router.ServeHTTP(rr, req)
 
 		if rr.Code != http.StatusOK {
-			t.Errorf("expected status code %d and got %d", http.StatusOK, rr.Code)
+			t.Errorf("want status code %d and got %d", http.StatusOK, rr.Code)
 		}
 	})
 
@@ -203,7 +203,7 @@ func TestUserService(t *testing.T) {
 		router.ServeHTTP(rr, req)
 
 		if rr.Code != http.StatusBadRequest {
-			t.Errorf("expected status code %d and got %d", http.StatusBadRequest, rr.Code)
+			t.Errorf("want status code %d and got %d", http.StatusBadRequest, rr.Code)
 		}
 	})
 
@@ -233,7 +233,7 @@ func TestUserService(t *testing.T) {
 		router.ServeHTTP(rr, req)
 
 		if rr.Code != http.StatusBadRequest {
-			t.Errorf("expected status code %d and got %d", http.StatusBadRequest, rr.Code)
+			t.Errorf("want status code %d and got %d", http.StatusBadRequest, rr.Code)
 		}
 	})
 
@@ -263,7 +263,7 @@ func TestUserService(t *testing.T) {
 		router.ServeHTTP(rr, req)
 
 		if rr.Code != http.StatusBadRequest {
-			t.Errorf("expected status code %d and got %d", http.StatusBadRequest, rr.Code)
+			t.Errorf("want status code %d and got %d", http.StatusBadRequest, rr.Code)
 		}
 	})
 
@@ -293,7 +293,7 @@ func TestUserService(t *testing.T) {
 		router.ServeHTTP(rr, req)
 
 		if rr.Code != http.StatusInternalServerError {
-			t.Errorf("expected status code %d and got %d", http.StatusInternalServerError, rr.Code)
+			t.Errorf("want status code %d and got %d", http.StatusInternalServerError, rr.Code)
 		}
 	})
 
@@ -317,7 +317,7 @@ func TestUserService(t *testing.T) {
 		router.ServeHTTP(rr, req)
 
 		if rr.Code != http.StatusOK {
-			t.Errorf("expected status code %d and got %d", http.StatusOK, rr.Code)
+			t.Errorf("want status code %d and got %d", http.StatusOK, rr.Code)
 		}
 	})
 
@@ -341,7 +341,7 @@ func TestUserService(t *testing.T) {
 		router.ServeHTTP(rr, req)
 
 		if rr.Code != http.StatusInternalServerError {
-			t.Errorf("expected status code %d and got %d", http.StatusInternalServerError, rr.Code)
+			t.Errorf("want status code %d and got %d", http.StatusInternalServerError, rr.Code)
 		}
 	})
 
@@ -365,7 +365,7 @@ func TestUserService(t *testing.T) {
 		router.ServeHTTP(rr, req)
 
 		if rr.Code != http.StatusOK {
-			t.Errorf("expected status code %d and got %d", http.StatusOK, rr.Code)
+			t.Errorf("want status code %d and got %d", http.StatusOK, rr.Code)
 		}
 	})
 
@@ -389,7 +389,7 @@ func TestUserService(t *testing.T) {
 		router.ServeHTTP(rr, req)
 
 		if rr.Code != http.StatusInternalServerError {
-			t.Errorf("expected status code %d and got %d", http.StatusInternalServerError, rr.Code)
+			t.Errorf("want status code %d and got %d", http.StatusInternalServerError, rr.Code)
 		}
 	})
 
@@ -413,7 +413,7 @@ func TestUserService(t *testing.T) {
 		router.ServeHTTP(rr, req)
 
 		if rr.Code != http.StatusInternalServerError {
-			t.Errorf("expected status code %d and got %d", http.StatusInternalServerError, rr.Code)
+			t.Errorf("want status code %d and got %d", http.StatusInternalServerError, rr.Code)
 		}
 	})
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
 	"github.com/sebastian-nunez/golang-store-api/config"
+	"github.com/sebastian-nunez/golang-store-api/service/auth"
 	"github.com/sebastian-nunez/golang-store-api/types"
 	"github.com/sebastian-nunez/golang-store-api/utils"
 )
@@ -38,9 +39,8 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/register", h.handleRegister).Methods(http.MethodPost)
 
 	// Admin only routes.
-	// TODO(sebastian-nunez): add JWT auth
-	router.HandleFunc("/users", h.handleGetUsers).Methods(http.MethodGet)
-	router.HandleFunc("/users/{id}", h.handleGetUserById).Methods(http.MethodGet)
+	router.HandleFunc("/users", auth.WithJWTAuth(h.handleGetUsers, h.store)).Methods(http.MethodGet)
+	router.HandleFunc("/users/{id}", auth.WithJWTAuth(h.handleGetUserById, h.store)).Methods(http.MethodGet)
 }
 
 func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {

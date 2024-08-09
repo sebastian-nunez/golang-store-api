@@ -4,7 +4,9 @@ Production-ready E-commerce backend, REST API in [Go](https://go.dev/) using [JW
 
 ## API documentation
 
-**Note:** for auth guarded endpoints, you have to hit the `/login` endpoint and retrieve the JWT token. Then, you can use that token string and place it as a query param `?token=` or in the `Authorization` header.
+> For auth guarded endpoints, you have to hit the `/login` endpoint and retrieve the JWT token.
+>
+> Then, you can use that token string and place it as a query param `?token=` or in the `Authorization` header.
 
 ### Auth
 

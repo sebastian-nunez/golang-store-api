@@ -6,23 +6,31 @@ Production-ready E-commerce backend, REST API in [Go](https://go.dev/) using [JW
 
 **Note:** for auth guarded endpoints, you have to hit the `/login` endpoint and retrieve the JWT token. Then, you can use that token string and place it as a query param `?token=` or in the `Authorization` header.
 
-## Auth
+### Auth
 
 | Method | Endpoint    | Description                       | Request Body                           | Response                      | Authentication |
 | ------ | ----------- | --------------------------------- | -------------------------------------- | ----------------------------- | -------------- |
 | POST   | `/login`    | Logs in a user and returns a JWT. | Email and password                     | 200 OK / 400 Bad Request      | No             |
 | POST   | `/register` | Registers a new user.             | First name, last name, email, password | 201 Created / 400 Bad Request | No             |
 
-## Users
+### Users
 
 | GET | `/users` | Retrieves a list of all users. | N/A | 200 OK / 500 Internal Server Error | Yes (Admin) |
 | GET | `/users/{id}` | Retrieves a user by their ID. | User ID | 200 OK / 400 Bad Request / 500 Internal Server Error | Yes (Admin) |
 
-## Error Responses
+### Products
 
-- **400 Bad Request**: This response is returned if the request body is invalid, or if required parameters are missing.
-- **401 Unauthorized**: This response is returned if the JWT token is missing or invalid (for protected routes).
-- **500 Internal Server Error**: This response is returned if there is an issue with the server processing the request.
+| Method | Endpoint         | Description                         | Request Body                                        | Response                                                             | Authentication |
+| ------ | ---------------- | ----------------------------------- | --------------------------------------------------- | -------------------------------------------------------------------- | -------------- |
+| GET    | `/products`      | Retrieves a list of all products.   | N/A                                                 | 200 OK / 500 Internal Server Error                                   | No             |
+| GET    | `/products/{id}` | Retrieves a product by its ID.      | Product ID                                          | 200 OK / 400 Bad Request / 404 Not Found / 500 Internal Server Error | No             |
+| POST   | `/products`      | Creates a new product (Admin only). | Name, description, price, and other product details | 201 Created / 400 Bad Request / 500 Internal Server Error            | Yes (Admin)    |
+
+### Cart/Orders
+
+| Method | Endpoint         | Description                                      | Request Body                      | Response                                             | Authentication |
+| ------ | ---------------- | ------------------------------------------------ | --------------------------------- | ---------------------------------------------------- | -------------- |
+| POST   | `/cart/checkout` | Checks out the user's cart and creates an order. | List of product items in the cart | 200 OK / 400 Bad Request / 500 Internal Server Error | Yes            |
 
 ## Getting started
 

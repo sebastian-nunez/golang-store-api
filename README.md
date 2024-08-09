@@ -19,8 +19,8 @@ Production-ready E-commerce backend, REST API in [Go](https://go.dev/) using [JW
 
 | Method | Endpoint      | Description                    | Request Body | Response                                             | Authentication |
 | ------ | ------------- | ------------------------------ | ------------ | ---------------------------------------------------- | -------------- |
-| GET    | `/users`      | Retrieves a list of all users. | N/A          | 200 OK / 500 Internal Server Error                   | Yes (Admin)    |
-| GET    | `/users/{id}` | Retrieves a user by their ID.  | User ID      | 200 OK / 400 Bad Request / 500 Internal Server Error | Yes (Admin)    |
+| GET    | `/users`      | Retrieves a list of all users. | N/A          | 200 OK / 500 Internal Server Error                   | Yes            |
+| GET    | `/users/{id}` | Retrieves a user by their ID.  | User ID      | 200 OK / 400 Bad Request / 500 Internal Server Error | Yes            |
 
 ### Products
 
@@ -28,7 +28,7 @@ Production-ready E-commerce backend, REST API in [Go](https://go.dev/) using [JW
 | ------ | ---------------- | ----------------------------------- | --------------------------------------------------- | -------------------------------------------------------------------- | -------------- |
 | GET    | `/products`      | Retrieves a list of all products.   | N/A                                                 | 200 OK / 500 Internal Server Error                                   | No             |
 | GET    | `/products/{id}` | Retrieves a product by its ID.      | Product ID                                          | 200 OK / 400 Bad Request / 404 Not Found / 500 Internal Server Error | No             |
-| POST   | `/products`      | Creates a new product (Admin only). | Name, description, price, and other product details | 201 Created / 400 Bad Request / 500 Internal Server Error            | Yes (Admin)    |
+| POST   | `/products`      | Creates a new product (Admin only). | Name, description, price, and other product details | 201 Created / 400 Bad Request / 500 Internal Server Error            | Yes            |
 
 ### Cart/Orders
 

@@ -124,6 +124,10 @@ func (s *mockProductStore) GetProductByID(id int) (*types.Product, error) {
 	return nil, s.err
 }
 
+func (s *mockProductStore) GetProductsByID(productIDs []int) ([]types.Product, error) {
+	return nil, s.err
+}
+
 func (s *mockProductStore) CreateProduct(product types.CreateProductRequest) (int, error) {
 	return 1, s.err
 }

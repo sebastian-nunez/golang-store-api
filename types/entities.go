@@ -38,3 +38,8 @@ type OrderItem struct {
 	Price     float64   `json:"price"`
 	CreatedAt time.Time `json:"createdAt"`
 }
+
+type CartCheckoutItem struct {
+	ProductID int `json:"productId"`
+	Quantity  int `json:"quantity"`
+}

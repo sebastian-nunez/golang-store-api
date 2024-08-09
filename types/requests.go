@@ -19,3 +19,7 @@ type CreateProductRequest struct {
 	Price       float64 `json:"price" validate:"required"`
 	Quantity    int     `json:"quantity" validate:"required"`
 }
+
+type CartCheckoutRequest struct {
+	Items []CartCheckoutItem `json:"items" validate:"required"`
+}

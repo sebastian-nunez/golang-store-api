@@ -1,12 +1,17 @@
 package auth
 
 import (
+	"context"
 	"strconv"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/sebastian-nunez/golang-store-api/config"
 )
+
+type Key string
+
+const UserKey Key = "userID"
 
 // CreateJwt returns a signed JWT token.
 func CreateJWTToken(secret []byte, userId int) (string, error) {
@@ -23,4 +28,12 @@ func CreateJWTToken(secret []byte, userId int) (string, error) {
 	}
 
 	return tokenString, nil
+}
+
+func GetUserIDFromContext(ctx context.Context) int {
+	userID, ok := ctx.Value(UserKey).(int)
+	if !ok {
+		return -1
+	}
+	return userID
 }

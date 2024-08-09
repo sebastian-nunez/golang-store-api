@@ -82,7 +82,8 @@ func TestProductService(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			mockProductStore := &mockProductStore{err: tc.mockErr}
-			handler := NewHandler(mockProductStore)
+			mockUserStore := &mockUserStore{}
+			handler := NewHandler(mockProductStore, mockUserStore)
 
 			var bodyBytes []byte
 			if tc.payload != nil {
@@ -119,19 +120,32 @@ type mockProductStore struct {
 func (s *mockProductStore) GetProducts() ([]types.Product, error) {
 	return nil, s.err
 }
-
 func (s *mockProductStore) GetProductByID(id int) (*types.Product, error) {
 	return nil, s.err
 }
-
 func (s *mockProductStore) GetProductsByID(productIDs []int) ([]types.Product, error) {
 	return nil, s.err
 }
-
 func (s *mockProductStore) CreateProduct(product types.CreateProductRequest) (int, error) {
 	return 1, s.err
 }
-
 func (s *mockProductStore) UpdateProduct(product types.Product) error {
 	return s.err
+}
+
+type mockUserStore struct {
+	err error
+}
+
+func (s *mockUserStore) GetUserByEmail(email string) (*types.User, error) {
+	return nil, s.err
+}
+func (s *mockUserStore) GetUserByID(id int) (*types.User, error) {
+	return nil, s.err
+}
+func (s *mockUserStore) CreateUser(user types.User) (int, error) {
+	return 0, s.err
+}
+func (s *mockUserStore) GetUsers() ([]types.User, error) {
+	return nil, s.err
 }

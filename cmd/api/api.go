@@ -41,7 +41,7 @@ func (s *Server) Run() error {
 
 	// Products
 	productStore := product.NewStore(s.db)
-	productHandler := product.NewHandler(productStore)
+	productHandler := product.NewHandler(productStore, userStore)
 	productHandler.RegisterRoutes(subrouter)
 
 	// Cart/Orders

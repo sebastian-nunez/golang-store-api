@@ -7,17 +7,20 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
+	"github.com/sebastian-nunez/golang-store-api/service/auth"
 	"github.com/sebastian-nunez/golang-store-api/types"
 	"github.com/sebastian-nunez/golang-store-api/utils"
 )
 
 type Handler struct {
-	store types.ProductStore
+	store     types.ProductStore
+	userStore types.UserStore
 }
 
-func NewHandler(store types.ProductStore) *Handler {
+func NewHandler(store types.ProductStore, userStore types.UserStore) *Handler {
 	return &Handler{
-		store: store,
+		store:     store,
+		userStore: userStore,
 	}
 }
 
@@ -26,8 +29,7 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/products/{id}", h.handleGetProductByID).Methods(http.MethodGet)
 
 	// Admin only routes.
-	// TODO(sebastian-nunez): add JWT auth
-	router.HandleFunc("/products", h.handleCreateProduct).Methods(http.MethodPost)
+	router.HandleFunc("/products", auth.WithJWTAuth(h.handleCreateProduct, h.userStore)).Methods(http.MethodPost)
 }
 
 func (h *Handler) handleGetProducts(w http.ResponseWriter, r *http.Request) {

@@ -40,11 +40,15 @@ Production-ready E-commerce backend, REST API in [Go](https://go.dev/) using [JW
 
 ### Running locally
 
-Make sure to have Go 1.22+ and Make installed, and then run:
+Make sure to have `Go 1.22+`, `MySQL` and `Make` installed.
 
-```bash
-make run
-```
+Steps:
+
+1. Create a database named `ecommerceDb` in MySQL
+
+2. Run `make migrate-up` to create database tables.
+
+3. Run `make run` to start the server.
 
 _The project requires environment variables to be set. You can find the list of required variables in the `.env.template` file._
 
